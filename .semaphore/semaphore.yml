@@ -12,8 +12,10 @@ blocks:
    task:
       jobs:
         - name: Copyright, Release build, SDK build
-          commands_file: ./tools/oio-travis-failfast.sh
+          commands: 
+            - ./tools/oio-travis-failfast.sh
         - name: C unit/func, Python 2 unit/pep8
-          commands_file: ./tools/oio-travis-unit.sh
+          commands: 
+            - ./tools/oio-travis-unit.sh
         # - name: C unit/func, Python 3 unit/pep8
         #   commands_file: ./tools/oio-travis-unit.sh
