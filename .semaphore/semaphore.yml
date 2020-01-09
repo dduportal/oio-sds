@@ -1,5 +1,5 @@
 blocks:
-  - name: "Set things up"
+  - name: Set things up
     task:
       jobs:
         - name: Compile
@@ -7,10 +7,16 @@ blocks:
             - checkout
             - echo "Linting code"
             - echo "Compiling code"
-  - name: "Unit tests"
+  - name: Unit tests
     task:
       jobs:
         - name: Unit
           commands:
             - checkout
             - echo "Running unit tests"
+version: v1.0
+name: ''
+agent:
+  machine:
+    type: e1-standard-2
+    os_image: ubuntu1804
