@@ -4,7 +4,7 @@ name: OpenIO SDS
 
 agent:
   machine:
-    type: e1-standard-8
+    type: e1-standard-2
     os_image: ubuntu1804
 
 blocks:
@@ -13,9 +13,9 @@ blocks:
       jobs:
         - name: Copyright, Release build, SDK build
           commands: 
-            - ./tools/oio-travis-failfast.sh
-        - name: C unit/func, Python 2 unit/pep8
-          commands: 
-            - ./tools/oio-travis-unit.sh
+            - bash -x ./tools/oio-travis-failfast.sh
+        # - name: C unit/func, Python 2 unit/pep8
+        #   commands: 
+        #     - ./tools/oio-travis-unit.sh
         # - name: C unit/func, Python 3 unit/pep8
         #   commands_file: ./tools/oio-travis-unit.sh
