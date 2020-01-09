@@ -1,22 +1,19 @@
-blocks:
-  - name: Set things up
-    task:
-      jobs:
-        - name: Compile
-          commands:
-            - checkout
-            - echo "Linting code"
-            - echo "Compiling code"
-  - name: Unit tests
-    task:
-      jobs:
-        - name: Unit
-          commands:
-            - checkout
-            - echo "Running unit tests"
 version: v1.0
-name: ''
+
+name: OpenIO SDS
+
 agent:
   machine:
     type: e1-standard-2
     os_image: ubuntu1804
+
+blocks:
+ - name: Fail Fast tests
+   task:
+      jobs:
+        - name: Copyright, Release build, SDK build
+          commands_file: ./tools/oio-travis-failfast.sh
+        - name: C unit/func, Python 2 unit/pep8
+          commands_file: ./tools/oio-travis-unit.sh
+        # - name: C unit/func, Python 3 unit/pep8
+        #   commands_file: ./tools/oio-travis-unit.sh
