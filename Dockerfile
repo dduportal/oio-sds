@@ -79,7 +79,7 @@ ENV ZK=127.0.0.1:2181
 ENV LD_LIBRARY_PATH=/tmp/oio/lib
 ENV PKG_CONFIG_PATH=/tmp/oio/lib/pkgconfig
 
-FROM commons-py2 AS build
+FROM commons-py2 AS build-py2
 
 ENV REPO_PATH=/root/oio
 
