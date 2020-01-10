@@ -17,8 +17,6 @@ blocks:
           value: ./docker-cache
         - name: IMAGE_CACHE_FILE
           value: ./docker-cache/sds-build-py2.dockerimage
-        - name: DOCKER_BUILDKIT
-          value: "1"
       jobs:
         - name: build with docker
           commands:
