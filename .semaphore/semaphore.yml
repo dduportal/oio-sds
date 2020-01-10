@@ -30,4 +30,4 @@ blocks:
             - docker image ls
             - time docker build --cache-from=${IMAGE_NAME} --tag=${IMAGE_NAME} --target=build-py2 ./
             - time docker save -o "${IMAGE_CACHE_FILE}" ${IMAGE_NAME}
-            - time cache store $SEMAPHORE_PROJECT_NAME-docker-cache
+            - time cache store $SEMAPHORE_PROJECT_NAME-docker-cache "${CACHE_DIR}"
