@@ -10,19 +10,29 @@ blocks:
       prologue:
         commands:
           - checkout
+      env_vars:
+        - name: IMAGE_NAME
+          value: sds-build-py2
+        - name: CACHE_DIR
+          value: ./docker-cache
+        - name: IMAGE_CACHE_FILE
+          value: "${CACHE_DIR}/sds-build-py2.dockerimage"
+        - name: DOCKER_BUILDKIT
+          value: 1
       jobs:
         - name: load docker Cache
           commands:
-            - ls ./docker-cache || true
+            - mkdir -p "${CACHE_DIR}"
             - time cache restore $SEMAPHORE_PROJECT_NAME-docker-cache
-            - ls ./docker-cache || true
+            - ls "${CACHE_DIR}"
             - docker image ls
-            - time docker load -i ./docker-cache/build-py2.tar
+            - time docker load -i "${IMAGE_CACHE_FILE}" || true
             - docker image ls
         - name: build with docker
           commands:
-            - time docker build --cache-from=sds-build-py2 --tag=sds-build-py2 --target=build-py2 ./
+            - export DOCKER_BUILDKIT=1
+            - time docker build --cache-from=${IMAGE_NAME} --tag=${IMAGE_NAME} --target=build-py2 ./
         - name: save docker cache
           commands:
-            - time docker save -o ./docker-cache/build-py2.tar sds-build-py2
+            - time docker save -o "${IMAGE_CACHE_FILE}" ${IMAGE_NAME}
             - time cache store $SEMAPHORE_PROJECT_NAME-docker-cache
