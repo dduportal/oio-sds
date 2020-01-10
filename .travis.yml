@@ -52,8 +52,8 @@ python:
 # before_install:
 #   - sudo apt-get install $([ "$TRAVIS_PYTHON_VERSION" == "2.7" ] && echo 'libapache2-mod-wsgi' || echo 'libapache2-mod-wsgi-py3')
 install:
-  - docker load -o "./docker-cache/sds-commons-py2.tar" || true
-  - docker load -o "./docker-cache/sds-build-py2.tar" || true
+  - docker load -i "./docker-cache/sds-commons-py2.tar" || true
+  - docker load -i "./docker-cache/sds-build-py2.tar" || true
   - docker build --cache-from=sds-commons-py2 --tag=sds-commons-py2 --target=commons-py2 ./
   
 #   - pip install --upgrade pip setuptools virtualenv tox -r all-requirements.txt -r test-requirements.txt
