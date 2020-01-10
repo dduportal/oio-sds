@@ -95,7 +95,6 @@ jobs:
         - docker build --cache-from="${IMAGE_NAME}" --tag="${IMAGE_NAME}" --target=build-py2 ./
         - docker image ls
         - docker save -o "${IMAGE_CACHE_FILE}" "${IMAGE_NAME}"
-        - ls -la "${CACHE_FILE}"
       name: Copyright, Release build, SDK build
 
 #     - script: ./tools/oio-travis-unit.sh
