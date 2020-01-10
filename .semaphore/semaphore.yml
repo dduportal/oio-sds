@@ -20,7 +20,7 @@ blocks:
         - name: DOCKER_BUILDKIT
           value: "1"
       jobs:
-        - name: load docker Cache
+        - name: build with docker
           commands:
             - mkdir -p "${CACHE_DIR}"
             - time cache restore $SEMAPHORE_PROJECT_NAME-docker-cache
@@ -28,11 +28,6 @@ blocks:
             - docker image ls
             - time docker load -i "${IMAGE_CACHE_FILE}" || true
             - docker image ls
-        - name: build with docker
-          commands:
-            - export DOCKER_BUILDKIT=1
             - time docker build --cache-from=${IMAGE_NAME} --tag=${IMAGE_NAME} --target=build-py2 ./
-        - name: save docker cache
-          commands:
             - time docker save -o "${IMAGE_CACHE_FILE}" ${IMAGE_NAME}
             - time cache store $SEMAPHORE_PROJECT_NAME-docker-cache
