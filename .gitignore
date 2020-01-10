@@ -56,3 +56,6 @@ CMakeCache.txt
 Makefile
 Temporary
 cmake-build-debug/
+
+# docker
+docker-cache/

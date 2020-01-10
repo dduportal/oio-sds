@@ -11,6 +11,18 @@ blocks:
         commands:
           - checkout
       jobs:
+        - name: load docker Cache
+          commands:
+            - ls ./docker-cache || true
+            - time cache restore $SEMAPHORE_PROJECT_NAME-docker-cache
+            - ls ./docker-cache || true
+            - docker image ls
+            - time docker load -i ./docker-cache/build-py2.tar
+            - docker image ls
         - name: build with docker
           commands:
-            - docker build --tag=sds-build-py2 --target=build-py2 ./
+            - time docker build --cache-from=sds-build-py2 --tag=sds-build-py2 --target=build-py2 ./
+        - name: save docker cache
+          commands:
+            - time docker save -o ./docker-cache/build-py2.tar sds-build-py2
+            - time cache store $SEMAPHORE_PROJECT_NAME-docker-cache

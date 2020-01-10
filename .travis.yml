@@ -51,11 +51,19 @@ python:
 #   - zookeeper
 # before_install:
 #   - sudo apt-get install $([ "$TRAVIS_PYTHON_VERSION" == "2.7" ] && echo 'libapache2-mod-wsgi' || echo 'libapache2-mod-wsgi-py3')
+
+env:
+  global:
+    - IMAGE_NAME=sds-build-py2
+    - CACHE_DIR=./docker-cache
+    - IMAGE_CACHE_FILE="${CACHE_DIR}/sds-build-py2.dockerimage"
+
+
 install:
-  - mkdir -p "./docker-cache"
-  - ls -la "./docker-cache"
+  - mkdir -p "${CACHE_DIR}"
+  - ls -la "${CACHE_DIR}"
   - docker image ls
-  - docker load -i "./docker-cache/sds-build-py2.tar" || true
+  - docker load -i "${IMAGE_CACHE_FILE}" || true
   - docker image ls
 
 cache:
@@ -83,11 +91,10 @@ jobs:
     - stage: Fail Fast tests
       script:
         - docker image ls
-        - image_name=sds-build-py2
-        - docker build --cache-from="${image_name}" --tag="${image_name}" --target=build-py2 ./
+        - docker build --cache-from="${IMAGE_NAME}" --tag="${IMAGE_NAME}" --target=build-py2 ./
         - docker image ls
-        - docker save -o "./docker-cache/sds-commons-py2.tar" "${image_name}"
-        - ls -la "./docker-cache"
+        - docker save -o "${IMAGE_CACHE_FILE}" "${IMAGE_NAME}"
+        - ls -la "${CACHE_FILE}"
       name: Copyright, Release build, SDK build
 
 #     - script: ./tools/oio-travis-unit.sh
