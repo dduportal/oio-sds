@@ -1,4 +1,4 @@
-FROM ubuntu:18.04 as commons-py2
+FROM ubuntu:18.04 as build-py2
 
 ## Prepare Environment
 RUN apt-get update -qq  \
@@ -8,11 +8,10 @@ RUN apt-get update -qq  \
       locales  \
       software-properties-common \
   && curl -fsSL http://mirror2.openio.io/pub/repo/openio/APT-GPG-KEY-OPENIO-0 | apt-key add - \
-  && apt-add-repository "deb http://mirror.openio.io/pub/repo/openio/sds/18.04/ubuntu/ bionic/"
-
-##  Build Packages
-RUN apt-get update && \
-  apt-get install -y --no-install-recommends \
+  && apt-add-repository "deb http://mirror.openio.io/pub/repo/openio/sds/18.04/ubuntu/ bionic/" \
+  ## Install Dev Packages
+  && apt-get update \
+  && apt-get install -y --no-install-recommends \
     apache2 \
     apache2-dev \
     asn1c \
@@ -48,47 +47,39 @@ RUN apt-get update && \
     python-virtualenv \
     python3 \
     python3-coverage \
+    python3-dev \
     redis-server \
     redis-tools \
     sqlite3 \
     zookeeper \
     zookeeper-bin \
-    zookeeperd
+    zookeeperd \
+  ## Build Go environment
+  && go get gopkg.in/ini.v1 golang.org/x/sys/unix
 
 WORKDIR /root/oio
 
 ## Build Python Environment
-RUN pip install --upgrade pip setuptools virtualenv tox zkpython
-RUN virtualenv /root/venv && . /root/venv/bin/activate
+RUN pip install --upgrade pip setuptools virtualenv tox zkpython \
+  && virtualenv /root/venv && . /root/venv/bin/activate
 COPY ./all-requirements.txt ./test-requirements.txt /root/oio/
 RUN pip install --upgrade -r all-requirements.txt -r test-requirements.txt
 
-## Build Go Environment
-RUN go get gopkg.in/ini.v1 golang.org/x/sys/unix
-
-  # - git fetch --tags
-  # - git submodule update --init --recursive
-# RUN sudo bash -c "echo '/tmp/core.%p.%E' > /proc/sys/kernel/core_pattern"
-
 VOLUME ["/root/venv"]
 
-ENV CMAKE_OPTS="-DENABLE_CODECOVERAGE=on -DCMAKE_INSTALL_PREFIX=/tmp/oio -DLD_LIBDIR=lib -DZK_LIBDIR=/usr/lib -DZK_INCDIR=/usr/include/zookeeper"
-ENV G_DEBUG=fatal_warnings
-ENV G_DEBUG_LEVEL=W
-ENV ZK=127.0.0.1:2181
-ENV LD_LIBRARY_PATH=/tmp/oio/lib
-ENV PKG_CONFIG_PATH=/tmp/oio/lib/pkgconfig
-
-FROM commons-py2 AS build-py2
-
-ENV REPO_PATH=/root/oio
+ENV G_DEBUG=fatal_warnings \
+  ZK=127.0.0.1:2181 \
+  G_DEBUG_LEVEL=W \
+  LD_LIBRARY_PATH=/tmp/oio/lib \
+  PKG_CONFIG_PATH=/tmp/oio/lib/pkgconfig \
+  REPO_PATH=/root/oio \
+  CMAKE_OPTS="-DENABLE_CODECOVERAGE=on -DCMAKE_INSTALL_PREFIX=/tmp/oio -DLD_LIBDIR=lib -DZK_LIBDIR=/usr/lib -DZK_INCDIR=/usr/include/zookeeper"
 
 COPY . "${REPO_PATH}"
-
+RUN bash -c "echo '/tmp/core.%p.%E' > /proc/sys/kernel/core_pattern" || true
 RUN bash ./tools/oio-build-sdk.sh "${REPO_PATH}"
 RUN bash ./tools/oio-build-release.sh "${REPO_PATH}"
 RUN bash ./tools/oio-check-copyright.sh "${REPO_PATH}"
-RUN python ./setup.py develop
+RUN python /root/oio/setup.py develop
 RUN tox -e variables
-RUN apt-get install -y python3-dev 
 RUN tox -e py3_variables

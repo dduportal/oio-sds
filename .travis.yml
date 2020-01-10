@@ -52,14 +52,16 @@ python:
 # before_install:
 #   - sudo apt-get install $([ "$TRAVIS_PYTHON_VERSION" == "2.7" ] && echo 'libapache2-mod-wsgi' || echo 'libapache2-mod-wsgi-py3')
 install:
+  - mkdir -p "./docker-cache"
   - ls -la "./docker-cache"
-  - docker load -i "./docker-cache/sds-commons-py2.tar" || true
+  - docker image ls
   - docker load -i "./docker-cache/sds-build-py2.tar" || true
   - docker image ls
-  - docker build --cache-from=sds-commons-py2 --tag=sds-commons-py2 --target=commons-py2 ./
-  - docker image ls
-  - docker save -o "./docker-cache/sds-commons-py2.tar" sds-commons-py2
-  
+
+cache:
+  directories:
+    - docker-cache
+
 #   - pip install --upgrade pip setuptools virtualenv tox -r all-requirements.txt -r test-requirements.txt
 #   - go get gopkg.in/ini.v1 golang.org/x/sys/unix
 #   - sudo bash -c "echo '/tmp/core.%p.%E' > /proc/sys/kernel/core_pattern"
@@ -83,7 +85,6 @@ jobs:
         - docker image ls
         - docker build --cache-from=sds-build-py2 --tag=sds-build-py2 --target=build-py2 ./
         - docker image ls
-        - mkdir -p "./docker-cache"
         - docker save -o "./docker-cache/sds-commons-py2.tar" sds-commons-py2
         - ls -la "./docker-cache"
       name: Copyright, Release build, SDK build
@@ -133,10 +134,6 @@ jobs:
 #       env: TEST_SUITE=single,small-cache,fsync,webhook
 #     - script: ./tools/oio-travis-suites.sh
 #       env: TEST_SUITE=multi-beanstalk
-
-cache:
-  directories:
-    - docker-cache
 
   # - docker save filename=docker-cache/saved_images.tar
   # if [[ -f "$filename" ]]; then docker load < "$filename"; fi
