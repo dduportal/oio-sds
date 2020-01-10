@@ -83,9 +83,10 @@ jobs:
     - stage: Fail Fast tests
       script:
         - docker image ls
-        - docker build --cache-from=sds-build-py2 --tag=sds-build-py2 --target=build-py2 ./
+        - image_name=sds-build-py2
+        - docker build --cache-from="${image_name}" --tag="${image_name}" --target=build-py2 ./
         - docker image ls
-        - docker save -o "./docker-cache/sds-commons-py2.tar" sds-commons-py2
+        - docker save -o "./docker-cache/sds-commons-py2.tar" "${image_name}"
         - ls -la "./docker-cache"
       name: Copyright, Release build, SDK build
 
