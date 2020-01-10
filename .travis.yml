@@ -52,7 +52,8 @@ python:
 # before_install:
 #   - sudo apt-get install $([ "$TRAVIS_PYTHON_VERSION" == "2.7" ] && echo 'libapache2-mod-wsgi' || echo 'libapache2-mod-wsgi-py3')
 install:
-  - docker load -i "./docker-cache/sds-commons-py2.tar" || true
+  - ls -la "./docker-cache"
+  - docker load -i ""./docker-cache/sds-commons-py2.tar" || true
   - docker load -i "./docker-cache/sds-build-py2.tar" || true
   - docker image ls
   - docker build --cache-from=sds-commons-py2 --tag=sds-commons-py2 --target=commons-py2 ./
@@ -79,6 +80,7 @@ jobs:
   include:
     - stage: Fail Fast tests
       script:
+        -
         - docker image ls
         - docker build --cache-from=sds-build-py2 --tag=sds-build-py2 --target=build-py2 ./
         - docker image ls
