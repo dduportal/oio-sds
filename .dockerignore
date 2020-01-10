@@ -1,0 +1,4 @@
+.github
+.semaphore
+.tox
+.travis.yml
