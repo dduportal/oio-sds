@@ -57,8 +57,6 @@ env:
     - IMAGE_NAME=sds-build-py2
     - CACHE_DIR=./docker-cache
     - IMAGE_CACHE_FILE="${CACHE_DIR}/sds-build-py2.dockerimage"
-    - DOCKER_BUILDKIT=1
-
 
 install:
   - mkdir -p "${CACHE_DIR}"
