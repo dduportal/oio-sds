@@ -54,7 +54,7 @@ python:
 install:
   - docker load -o "./docker-cache/sds-commons-py2.tar" || true
   - docker load -o "./docker-cache/sds-build-py2.tar" || true
-  - docker build --tag=sds-commons-py2 --target=commons-py2 ./
+  - docker build --cache-from=sds-commons-py2 --tag=sds-commons-py2 --target=commons-py2 ./
   
 #   - pip install --upgrade pip setuptools virtualenv tox -r all-requirements.txt -r test-requirements.txt
 #   - go get gopkg.in/ini.v1 golang.org/x/sys/unix
@@ -76,7 +76,7 @@ jobs:
   include:
     - stage: Fail Fast tests
       script:
-        - docker build --cache-from=sds-commons-py2 --tag=sds-builder-py2 --target=pbuild-py2 ./
+        - docker build --cache-from=sds-build-py2 --tag=sds-build-py2 --target=build-py2 ./
       name: Copyright, Release build, SDK build
 
 #     - script: ./tools/oio-travis-unit.sh
