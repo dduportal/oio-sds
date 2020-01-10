@@ -72,8 +72,8 @@ jobs:
   include:
     - stage: Fail Fast tests
       script:
-        - docker build --tag=sds-builder-commons-py2 --target=commons-py2 
-        - docker build --tag=sds-builder-py2 --target=build-py2
+        - docker build --tag=sds-builder-commons-py2 --target=commons-py2 ./
+        - docker build --tag=sds-builder-py2 --target=build-py2 ./
       name: Copyright, Release build, SDK build
 
 #     - script: ./tools/oio-travis-unit.sh
@@ -122,8 +122,13 @@ jobs:
 #     - script: ./tools/oio-travis-suites.sh
 #       env: TEST_SUITE=multi-beanstalk
 
+cache:
+  directories:
+    - docker-cache
+
 after_script:
   - docker images
+  - docker save 
 
 # after_success:
 #   - bash <(curl -s https://codecov.io/bash) -f /tmp/cmake_coverage.output
